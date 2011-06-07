@@ -232,7 +232,8 @@ public static void InitDefaults()
     {
         defaultOptionsHashMap = new HashMap<String, String>();
 //            AgentsPool.setCurrentAgent(new HumanKeyboardAgent());
-        defaultOptionsHashMap.put("-ag", "ch.idsia.agents.controllers.human.HumanKeyboardAgent");
+        defaultOptionsHashMap.put("-ag", //"ch.idsia.agents.controllers.ForwardAgent");
+        		"ch.idsia.agents.controllers.human.HumanKeyboardAgent");
 //        defaultOptionsHashMap.put("-amico", "off");
         defaultOptionsHashMap.put("-echo", "off"); //defaultOptionsHashMap.put("-echo","off");
         defaultOptionsHashMap.put("-ewf", "on"); //defaultOptionsHashMap.put("-exitWhenFinished","off");
