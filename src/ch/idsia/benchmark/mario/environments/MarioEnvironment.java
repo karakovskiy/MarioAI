@@ -209,9 +209,9 @@ public void reset(MarioAIOptions setUpOptions)
 
 public void tick()
 {
-    levelScene.tick();
-    if (GlobalOptions.isVisualization)
-        marioVisualComponent.tick();
+	levelScene.tick();
+	if (GlobalOptions.isVisualization)
+		marioVisualComponent.tick();
 }
 
 public float[] getMarioFloatPos()

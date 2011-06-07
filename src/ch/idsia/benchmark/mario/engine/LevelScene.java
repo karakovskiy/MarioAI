@@ -97,6 +97,8 @@ public static int killedCreaturesByFireBall;
 public static int killedCreaturesByStomp;
 public static int killedCreaturesByShell;
 
+private final int CAM_XOFFSET = -160;
+
 private Replayer replayer;
 
 //    private int[] args; //passed to reset method. ATTENTION: not cloned.
@@ -172,168 +174,45 @@ public void checkFireballCollide(Fireball fireball)
     fireballsToCheck.add(fireball);
 }
 
-public void tick()
-{
-    if (GlobalOptions.isGameplayStopped)
-        return;
+public void tick(){
+	if (GlobalOptions.isGameplayStopped) { return; }
+	
+	timeLeft--;
+	if (timeLeft == 0){ mario.die("Time out!"); }
+	
+	if (startTime > 0) { startTime++; }
 
-    timeLeft--;
-    if (timeLeft == 0)
-        mario.die("Time out!");
-    xCamO = xCam;
-    yCamO = yCam;
+	xCamO = xCam;
+	yCamO = yCam;
+	xCam = mario.x + CAM_XOFFSET;
+	checkCamLimits();
+	
+	removeNotSeenSprites();
+	countFireballsOnScreen();
+	
+	tickCount++;
+	level.tick();
 
-    if (startTime > 0)
-    {
-        startTime++;
-    }
+	addSpritesToScreen();
+	for (Sprite sprite : sprites) { sprite.tick(); }
+	checkLadders();
+	for (Sprite sprite : sprites) { sprite.collideCheck(); }
+	checkShells();
+	checkFireballs();
 
-    float targetXCam = mario.x - 160;
-
-    xCam = targetXCam;
-
-    if (xCam < 0) xCam = 0;
-    if (xCam > level.length * cellSize - GlobalOptions.VISUAL_COMPONENT_WIDTH)
-        xCam = level.length * cellSize - GlobalOptions.VISUAL_COMPONENT_WIDTH;
-
-    fireballsOnScreen = 0;
-
-    for (Sprite sprite : sprites)
-    {
-        if (sprite != mario)
-        {
-            float xd = sprite.x - xCam;
-            float yd = sprite.y - yCam;
-            if (xd < -64 || xd > GlobalOptions.VISUAL_COMPONENT_WIDTH + 64 || yd < -64 || yd > GlobalOptions.VISUAL_COMPONENT_HEIGHT + 64)
-            {
-                removeSprite(sprite);
-            } else
-            {
-                if (sprite instanceof Fireball)
-                    fireballsOnScreen++;
-            }
-        }
-    }
-
-    tickCount++;
-    level.tick();
-
-//            boolean hasShotCannon = false;
-//            int xCannon = 0;
-
-    for (int x = (int) xCam / cellSize - 1; x <= (int) (xCam + this.width) / cellSize + 1; x++)
-        for (int y = (int) yCam / cellSize - 1; y <= (int) (yCam + this.height) / cellSize + 1; y++)
-        {
-            int dir = 0;
-
-            if (x * cellSize + 8 > mario.x + cellSize) dir = -1;
-            if (x * cellSize + 8 < mario.x - cellSize) dir = 1;
-
-            SpriteTemplate st = level.getSpriteTemplate(x, y);
-
-            if (st != null)
-            {
-//                        if (st.getType() == Sprite.KIND_SPIKY)
-//                        {
-//                            System.out.println("here");
-//                        }
-
-                if (st.lastVisibleTick != tickCount - 1)
-                {
-                    if (st.sprite == null || !sprites.contains(st.sprite))
-                        st.spawn(this, x, y, dir);
-                }
-
-                st.lastVisibleTick = tickCount;
-            }
-
-            if (dir != 0)
-            {
-                byte b = level.getBlock(x, y);
-                if (((Level.TILE_BEHAVIORS[b & 0xff]) & Level.BIT_ANIMATED) > 0)
-                {
-                    if ((b % cellSize) / 4 == 3 && b / cellSize == 0)
-                    {
-                        if ((tickCount - x * 2) % 100 == 0)
-                        {
-//                                    xCannon = x;
-                            for (int i = 0; i < 8; i++)
-                            {
-                                addSprite(new Sparkle(x * cellSize + 8, y * cellSize + (int) (Math.random() * cellSize), (float) Math.random() * dir, 0, 0, 1, 5));
-                            }
-                            addSprite(new BulletBill(this, x * cellSize + 8 + dir * 8, y * cellSize + 15, dir));
-
-//                                    hasShotCannon = true;
-                        }
-                    }
-                }
-            }
-        }
-
-    for (Sprite sprite : sprites)
-        sprite.tick();
-
-    byte levelElement = level.getBlock(mario.mapX, mario.mapY);
-    if (levelElement == (byte) (13 + 3 * 16) || levelElement == (byte) (13 + 5 * 16))
-    {
-        if (levelElement == (byte) (13 + 5 * 16))
-            mario.setOnTopOfLadder(true);
-        else
-            mario.setInLadderZone(true);
-    } else if (mario.isInLadderZone())
-    {
-        mario.setInLadderZone(false);
-    }
-
-
-    for (Sprite sprite : sprites)
-        sprite.collideCheck();
-
-    for (Shell shell : shellsToCheck)
-    {
-        for (Sprite sprite : sprites)
-        {
-            if (sprite != shell && !shell.dead)
-            {
-                if (sprite.shellCollideCheck(shell))
-                {
-                    if (mario.carried == shell && !shell.dead)
-                    {
-                        mario.carried = null;
-                        mario.setRacoon(false);
-                        //System.out.println("sprite = " + sprite);
-                        shell.die();
-                        ++this.killedCreaturesTotal;
-                    }
-                }
-            }
-        }
-    }
-    shellsToCheck.clear();
-
-    for (Fireball fireball : fireballsToCheck)
-        for (Sprite sprite : sprites)
-            if (sprite != fireball && !fireball.dead)
-                if (sprite.fireballCollideCheck(fireball))
-                    fireball.die();
-    fireballsToCheck.clear();
-
-
-    sprites.addAll(0, spritesToAdd);
-    sprites.removeAll(spritesToRemove);
-    spritesToAdd.clear();
-    spritesToRemove.clear();
+	sprites.addAll(0, spritesToAdd);
+	sprites.removeAll(spritesToRemove);
+	spritesToAdd.clear();
+	spritesToRemove.clear();
 }
 
-public void addSprite(Sprite sprite)
-{
-    spritesToAdd.add(sprite);
-    sprite.tick();
+public void addSprite(Sprite sprite){
+	spritesToAdd.add(sprite);
+	sprite.tick();
 }
 
-public void removeSprite(Sprite sprite)
-{
-    spritesToRemove.add(sprite);
+public void removeSprite(Sprite sprite){
+	spritesToRemove.add(sprite);
 }
 
 public void bump(int x, int y, boolean canBreakBricks)
@@ -661,6 +540,114 @@ public void appendBonusPoints(final int superPunti)
     bonusPoints += superPunti;
 }
 
+private void checkCamLimits(){
+	if (xCam < 0) xCam = 0;
+	if (xCam > level.length * cellSize - GlobalOptions.VISUAL_COMPONENT_WIDTH)
+			xCam = level.length * cellSize - getCamWidth();
+}
+
+private boolean outOfScreen(Sprite sprite){
+	final float xd = sprite.x - xCam;
+	final float yd = sprite.y - yCam;
+	return xd < -64 || xd > getCamWidth() + 64 || yd < -64 || yd > getCamHeight() + 64;
+}
+
+private void removeNotSeenSprites(){
+	for (Sprite sprite : sprites){
+		if (sprite != mario){
+			if (outOfScreen(sprite)){ removeSprite(sprite); }
+		}
+	}
+}
+
+private void countFireballsOnScreen(){
+	fireballsOnScreen = 0;
+	for (Sprite sprite : sprites){
+		if (sprite instanceof Fireball && !outOfScreen(sprite)){ fireballsOnScreen++; }
+	}
+}
+
+private void addSpritesToScreen(){
+	for (int x = (int) xCam / cellSize - 1; x <= (int) (xCam + this.width) / cellSize + 1; x++){
+		for (int y = (int) yCam / cellSize - 1; y <= (int) (yCam + this.height) / cellSize + 1; y++){
+			int dir = 0;
+	
+			if (x * cellSize + 8 > mario.x + cellSize) { dir = -1; }
+			if (x * cellSize + 8 < mario.x - cellSize) { dir = 1; }
+			
+			SpriteTemplate st = level.getSpriteTemplate(x, y);
+	
+			if (st != null){
+				if ((st.lastVisibleTick != tickCount - 1) &&
+						(st.sprite == null || !sprites.contains(st.sprite))){
+					st.spawn(this, x, y, dir);
+				}
+				st.lastVisibleTick = tickCount;
+			}
+	
+			if (dir != 0){
+				byte b = level.getBlock(x, y);
+				if (((Level.TILE_BEHAVIORS[b & 0xff]) & Level.BIT_ANIMATED) > 0){
+					if ((b % cellSize) / 4 == 3 && b / cellSize == 0){
+						if ((tickCount - x * 2) % 100 == 0){
+							for (int i = 0; i < 8; i++){
+								addSprite(new Sparkle(x * cellSize + 8, y * cellSize + 
+													(int) (Math.random() * cellSize),
+													(float) Math.random() * dir, 0, 0, 1, 5));
+							}
+							addSprite(new BulletBill(this, x * cellSize + 8 + dir * 8, y * cellSize + 15, dir));
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+private void checkLadders(){
+	byte levelElement = level.getBlock(mario.mapX, mario.mapY);
+	if (levelElement == (byte) (13 + 3 * 16) || levelElement == (byte) (13 + 5 * 16)){
+		if (levelElement == (byte) (13 + 5 * 16)){
+			mario.setOnTopOfLadder(true);
+		}
+		else { mario.setInLadderZone(true); }
+	} else if (mario.isInLadderZone()){
+		mario.setInLadderZone(false);
+	}
+}
+
+private void checkShells(){
+	for (Shell shell : shellsToCheck){
+		for (Sprite sprite : sprites){
+			if (sprite != shell && !shell.dead){
+				if (sprite.shellCollideCheck(shell)){
+					if (mario.carried == shell && !shell.dead){
+						mario.carried = null;
+						mario.setRacoon(false);
+						shell.die();
+						++this.killedCreaturesTotal;
+					}
+				}
+			}
+		}
+	}
+	shellsToCheck.clear();
+}
+
+private void checkFireballs(){
+	for (Fireball fireball : fireballsToCheck){
+		for (Sprite sprite : sprites){
+			if ((sprite != fireball && !fireball.dead) &&
+					(sprite.fireballCollideCheck(fireball))){
+				fireball.die();
+			}
+		}
+	}
+	fireballsToCheck.clear();
+}
+
+private int getCamWidth(){ return GlobalOptions.VISUAL_COMPONENT_WIDTH; }
+private int getCamHeight(){ return GlobalOptions.VISUAL_COMPONENT_HEIGHT; }
 
 }
 
