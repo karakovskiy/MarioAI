@@ -118,7 +118,7 @@ public static final int BIT_BREAKABLE = 1 << 5;
 public static final int BIT_PICKUPABLE = 1 << 6;
 public static final int BIT_ANIMATED = 1 << 7;
 
-public static objCounters counters;
+public objCounters counters;
 
 //private final int FILE_HEADER = 0x271c4178;
 public int length;

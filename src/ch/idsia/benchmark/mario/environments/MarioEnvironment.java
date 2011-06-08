@@ -62,7 +62,7 @@ private byte[][] levelSceneZ;     // memory is allocated in reset
 private byte[][] enemiesZ;      // memory is allocated in reset
 private byte[][] mergedZZ;      // memory is allocated in reset
 
-public List<Sprite> sprites;
+//public List<Sprite> sprites;
 
 private int[] serializedLevelScene;   // memory is allocated in reset
 private int[] serializedEnemies;      // memory is allocated in reset
@@ -168,7 +168,7 @@ public void reset(MarioAIOptions setUpOptions)
     } else
         levelScene.reset(setUpOptions);
 
-    sprites = levelScene.sprites;
+    //sprites = levelScene.sprites;
 
     //create recorder
     String recordingFileName = setUpOptions.getRecordingFileName();
@@ -214,14 +214,12 @@ public void tick()
 		marioVisualComponent.tick();
 }
 
-public float[] getMarioFloatPos()
-{
-    return levelScene.getMarioFloatPos();
+public float[] getMarioFloatPos(){
+	return levelScene.getMarioFloatPos();
 }
 
-public int getMarioMode()
-{
-    return levelScene.getMarioMode();
+public int getMarioMode(){
+	return levelScene.getMarioMode();
 }
 
 public byte[][] getLevelSceneObservationZ(int ZLevel)
@@ -252,7 +250,7 @@ public byte[][] getEnemiesObservationZ(int ZLevel)
     for (int w = 0; w < enemiesZ.length; w++)
         for (int h = 0; h < enemiesZ[0].length; h++)
             enemiesZ[w][h] = 0;
-    for (Sprite sprite : sprites)
+    for (Sprite sprite : levelScene.sprites)
     {
         if (sprite.isDead() || sprite.kind == levelScene.mario.kind)
             continue;
@@ -300,7 +298,7 @@ public byte[][] getMergedObservationZZ(int ZLevelScene, int ZLevelEnemies)
 //        for (int w = 0; w < mergedZZ.length; w++)
 //            for (int h = 0; h < mergedZZ[0].length; h++)
 //                mergedZZ[w][h] = -1;
-    for (Sprite sprite : sprites)
+    for (Sprite sprite : levelScene.sprites)
     {
         if (sprite.isDead() || sprite.kind == levelScene.mario.kind)
             continue;
@@ -413,9 +411,38 @@ private String enemyToStr(int el)
 }
 
 
-public float[] getEnemiesFloatPos()
-{
-    return levelScene.getEnemiesFloatPos();
+public float[] getEnemiesFloatPos(){
+	final List<Float> enemiesFloatsList = new ArrayList<Float>();
+	for (Sprite sprite : levelScene.sprites){
+		// TODO:[M]: add unit tests for getEnemiesFloatPos involving all kinds of creatures
+		if (sprite.isDead()) continue;
+		switch (sprite.kind){
+			case Sprite.KIND_GOOMBA:
+			case Sprite.KIND_BULLET_BILL:
+			case Sprite.KIND_ENEMY_FLOWER:
+			case Sprite.KIND_GOOMBA_WINGED:
+			case Sprite.KIND_GREEN_KOOPA:
+			case Sprite.KIND_GREEN_KOOPA_WINGED:
+			case Sprite.KIND_RED_KOOPA:
+			case Sprite.KIND_RED_KOOPA_WINGED:
+			case Sprite.KIND_SPIKY:
+			case Sprite.KIND_SPIKY_WINGED:
+			case Sprite.KIND_SHELL:{
+				enemiesFloatsList.add((float) sprite.kind);
+				enemiesFloatsList.add(sprite.x - levelScene.mario.x);
+				enemiesFloatsList.add(sprite.y - levelScene.mario.y);
+			}
+		}
+	}
+
+	float[] enemiesFloatsPosArray = new float[enemiesFloatsList.size()];
+	
+	int i = 0;
+	for (Float F : enemiesFloatsList){
+		enemiesFloatsPosArray[i++] = F;
+	}
+	
+	return enemiesFloatsPosArray;
 }
 
 public boolean isMarioOnGround()
@@ -478,9 +505,8 @@ public int[] getObservationDetails()
     return new int[]{receptiveFieldWidth, receptiveFieldHeight, marioEgoPos[0], marioEgoPos[1]};
 }
 
-public List<Sprite> getSprites()
-{
-    return sprites;
+public List<Sprite> getSprites(){
+	return levelScene.sprites;
 }
 
 public int[] getSerializedFullObservationZZ(int ZLevelScene, int ZLevelEnemies)
@@ -527,9 +553,17 @@ public int[] getSerializedMergedObservationZZ(int ZLevelScene, int ZLevelEnemies
     return serializedMergedObservation;
 }
 
-public float[] getCreaturesFloatPos()
-{
-    return levelScene.getCreaturesFloatPos();
+/**
+ * first and second elements of the array are x and y Mario coordinates correspondingly
+ *
+ * @return an array of size 2*(number of creatures on screen) including mario
+ */
+public float[] getCreaturesFloatPos(){
+	float[] enemies = this.getEnemiesFloatPos();
+	float ret[] = new float[enemies.length + 2];
+	System.arraycopy(this.getMarioFloatPos(), 0, ret, 0, 2);
+	System.arraycopy(enemies, 0, ret, 2, enemies.length);
+	return ret;
 }
 
 public int[] getMarioState()

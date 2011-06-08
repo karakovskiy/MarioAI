@@ -65,14 +65,14 @@ private int timeLeft;
 private int width;
 private int height;
 
-private static boolean onLadder = false;
+//private static boolean onLadder = false;
 
 private Random randomGen = new Random(0);
 
-final private List<Float> enemiesFloatsList = new ArrayList<Float>();
+//final private List<Float> enemiesFloatsList = new ArrayList<Float>();
 final private float[] marioFloatPos = new float[2];
 final private int[] marioState = new int[11];
-private int numberOfHiddenCoinsGained = 0;
+// private int numberOfHiddenCoinsGained = 0;
 
 private int greenMushroomMode = 0;
 
@@ -117,46 +117,7 @@ public LevelScene()
         System.exit(0);
     }
 }
-
-
 // TODO: !H!: Move to MarioEnvironment !!
-
-public float[] getEnemiesFloatPos()
-{
-    enemiesFloatsList.clear();
-    for (Sprite sprite : sprites)
-    {
-        // TODO:[M]: add unit tests for getEnemiesFloatPos involving all kinds of creatures
-        if (sprite.isDead()) continue;
-        switch (sprite.kind)
-        {
-            case Sprite.KIND_GOOMBA:
-            case Sprite.KIND_BULLET_BILL:
-            case Sprite.KIND_ENEMY_FLOWER:
-            case Sprite.KIND_GOOMBA_WINGED:
-            case Sprite.KIND_GREEN_KOOPA:
-            case Sprite.KIND_GREEN_KOOPA_WINGED:
-            case Sprite.KIND_RED_KOOPA:
-            case Sprite.KIND_RED_KOOPA_WINGED:
-            case Sprite.KIND_SPIKY:
-            case Sprite.KIND_SPIKY_WINGED:
-            case Sprite.KIND_SHELL:
-            {
-                enemiesFloatsList.add((float) sprite.kind);
-                enemiesFloatsList.add(sprite.x - mario.x);
-                enemiesFloatsList.add(sprite.y - mario.y);
-            }
-        }
-    }
-
-    float[] enemiesFloatsPosArray = new float[enemiesFloatsList.size()];
-
-    int i = 0;
-    for (Float F : enemiesFloatsList)
-        enemiesFloatsPosArray[i++] = F;
-
-    return enemiesFloatsPosArray;
-}
 
 public int fireballsOnScreen = 0;
 
@@ -217,47 +178,36 @@ public void removeSprite(Sprite sprite){
 
 public void bump(int x, int y, boolean canBreakBricks)
 {
-    byte block = level.getBlock(x, y);
+	byte block = level.getBlock(x, y);
+	
+	if ((Level.TILE_BEHAVIORS[block & 0xff] & Level.BIT_BUMPABLE) > 0){
+		if (block == 1) { Mario.gainHiddenBlock(); }
+		bumpInto(x, y - 1);
+		byte blockData = level.getBlockData(x, y);
+		if (blockData < 0){
+			level.setBlockData(x, y, (byte) (blockData + 1));
+		}
+		if (blockData == 0){
+			level.setBlock(x, y, (byte) 4);
+			level.setBlockData(x, y, (byte) 4);
+		}
 
-    if ((Level.TILE_BEHAVIORS[block & 0xff] & Level.BIT_BUMPABLE) > 0)
-    {
-        if (block == 1)
-            Mario.gainHiddenBlock();
-        bumpInto(x, y - 1);
-        byte blockData = level.getBlockData(x, y);
-        if (blockData < 0)
-            level.setBlockData(x, y, (byte) (blockData + 1));
-
-        if (blockData == 0)
-        {
-            level.setBlock(x, y, (byte) 4);
-            level.setBlockData(x, y, (byte) 4);
-        }
-
-        if (((Level.TILE_BEHAVIORS[block & 0xff]) & Level.BIT_SPECIAL) > 0)
-        {
-            if (randomGen.nextInt(5) == 0 && level.difficulty > 4)
-            {
-                addSprite(new GreenMushroom(this, x * cellSize + 8, y * cellSize + 8));
-                ++level.counters.greenMushrooms;
-            } else
-            {
-                if (!Mario.large)
-                {
-                    addSprite(new Mushroom(this, x * cellSize + 8, y * cellSize + 8));
-                    ++level.counters.mushrooms;
-                } else
-                {
-                    addSprite(new FireFlower(this, x * cellSize + 8, y * cellSize + 8));
-                    ++level.counters.flowers;
-                }
-            }
-        } else
-        {
-            Mario.gainCoin();
-            addSprite(new CoinAnim(x, y));
-        }
-    }
+		if (((Level.TILE_BEHAVIORS[block & 0xff]) & Level.BIT_SPECIAL) > 0){
+			if (randomGen.nextInt(5) == 0 && level.difficulty > 4){
+				addSprite(new GreenMushroom(this, x * cellSize + 8, y * cellSize + 8));
+				++level.counters.greenMushrooms;
+			}else if (!Mario.large){
+				addSprite(new Mushroom(this, x * cellSize + 8, y * cellSize + 8));
+				++level.counters.mushrooms;
+			}else{
+				addSprite(new FireFlower(this, x * cellSize + 8, y * cellSize + 8));
+				++level.counters.flowers;
+			}
+		}else{
+			Mario.gainCoin();
+			addSprite(new CoinAnim(x, y));
+		}
+	}
 
     if ((Level.TILE_BEHAVIORS[block & 0xff] & Level.BIT_BREAKABLE) > 0)
     {
@@ -295,25 +245,10 @@ public int getTimeSpent() { return startTime / GlobalOptions.mariosecondMultipli
 
 public int getTimeLeft() { return timeLeft / GlobalOptions.mariosecondMultiplier; }
 
-public int getKillsTotal()
-{
-    return killedCreaturesTotal;
-}
-
-public int getKillsByFire()
-{
-    return killedCreaturesByFireBall;
-}
-
-public int getKillsByStomp()
-{
-    return killedCreaturesByStomp;
-}
-
-public int getKillsByShell()
-{
-    return killedCreaturesByShell;
-}
+public int getKillsTotal()   { return killedCreaturesTotal; }
+public int getKillsByFire()  { return killedCreaturesByFireBall; }
+public int getKillsByStomp() { return killedCreaturesByStomp; }
+public int getKillsByShell() { return killedCreaturesByShell; }
 
 public int[] getMarioState()
 {
@@ -350,20 +285,6 @@ public boolean isMarioAbleToShoot()
 public int getMarioStatus()
 {
     return mario.getStatus();
-}
-
-/**
- * first and second elements of the array are x and y Mario coordinates correspondingly
- *
- * @return an array of size 2*(number of creatures on screen) including mario
- */
-public float[] getCreaturesFloatPos()
-{
-    float[] enemies = this.getEnemiesFloatPos();
-    float ret[] = new float[enemies.length + 2];
-    System.arraycopy(this.getMarioFloatPos(), 0, ret, 0, 2);
-    System.arraycopy(enemies, 0, ret, 2, enemies.length);
-    return ret;
 }
 
 public boolean isMarioOnGround()
@@ -479,65 +400,47 @@ public void reset(MarioAIOptions marioAIOptions)
     tickCount = 0;
 }
 
-public float[] getMarioFloatPos()
-{
-    marioFloatPos[0] = this.mario.x;
-    marioFloatPos[1] = this.mario.y;
-    return marioFloatPos;
+public float[] getMarioFloatPos(){
+	marioFloatPos[0] = this.mario.x;
+	marioFloatPos[1] = this.mario.y;
+	return marioFloatPos;
 }
 
-public int getMarioMode()
-{ return mario.getMode(); }
+public int getMarioMode() { return mario.getMode(); }
 
-public boolean isMarioCarrying()
-{ return mario.carried != null; }
+public boolean isMarioCarrying() { return mario.carried != null; }
 
-public int getLevelDifficulty()
-{ return levelDifficulty; }
+public int getLevelDifficulty() { return levelDifficulty; }
 
-public long getLevelSeed()
-{ return levelSeed; }
+public long getLevelSeed() { return levelSeed; }
 
-public int getLevelLength()
-{ return levelLength; }
+public int getLevelLength() { return levelLength; }
 
-public int getLevelHeight()
-{ return levelHeight; }
+public int getLevelHeight() { return levelHeight; }
 
-public int getLevelType()
-{ return levelType; }
+public int getLevelType() { return levelType; }
 
 
-public void addMemoMessage(final String memoMessage)
-{
-    memo += memoMessage;
+public void addMemoMessage(final String memoMessage){
+	memo += memoMessage;
 }
 
 public Point getMarioInitialPos() {return marioInitialPos;}
 
-public void setReplayer(Replayer replayer)
-{
-    this.replayer = replayer;
+public void setReplayer(Replayer replayer){
+	this.replayer = replayer;
 }
 
-public int getGreenMushroomMode()
-{
-    return greenMushroomMode;
+public int getGreenMushroomMode(){ return greenMushroomMode; }
+
+public int getBonusPoints(){ return bonusPoints; }
+
+public void setBonusPoints(final int bonusPoints){
+	this.bonusPoints = bonusPoints;
 }
 
-public int getBonusPoints()
-{
-    return bonusPoints;
-}
-
-public void setBonusPoints(final int bonusPoints)
-{
-    this.bonusPoints = bonusPoints;
-}
-
-public void appendBonusPoints(final int superPunti)
-{
-    bonusPoints += superPunti;
+public void appendBonusPoints(final int superPunti){
+	bonusPoints += superPunti;
 }
 
 private void checkCamLimits(){
@@ -625,7 +528,7 @@ private void checkShells(){
 						mario.carried = null;
 						mario.setRacoon(false);
 						shell.die();
-						++this.killedCreaturesTotal;
+						++killedCreaturesTotal;
 					}
 				}
 			}
