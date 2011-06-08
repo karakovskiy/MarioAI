@@ -117,7 +117,6 @@ public LevelScene()
         System.exit(0);
     }
 }
-// TODO: !H!: Move to MarioEnvironment !!
 
 public int fireballsOnScreen = 0;
 
