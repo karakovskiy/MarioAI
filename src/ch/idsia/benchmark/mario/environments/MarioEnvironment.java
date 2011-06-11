@@ -84,13 +84,11 @@ public static SystemOfValues IntermediateRewardsSystemOfValues = new SystemOfVal
 
 DecimalFormat df = new DecimalFormat("######.#");
 
-public static MarioEnvironment getInstance()
-{
-    return ourInstance;
+public static MarioEnvironment getInstance() {
+	return ourInstance;
 }
 
-private MarioEnvironment()
-{
+private MarioEnvironment() {
 //        System.out.println("System.getProperty(\"java.awt.headless\") = " + System.getProperty("java.awt.headless"));
 //        System.out.println("System.getProperty(\"verbose\") = " + System.getProperty("-verbose"));
 //        System.out.println("Java: JA ZDES'!!");
@@ -99,18 +97,13 @@ private MarioEnvironment()
     levelScene = new LevelScene();
 }
 
-public void resetDefault()
-{
-    levelScene.resetDefault();
+public void resetDefault() {
+	levelScene.resetDefault();
 }
 
-public void reset(String args)
-{
-    MarioAIOptions marioAIOptions = MarioAIOptions.getOptionsByString(args);
-    this.reset(marioAIOptions);
-//        MarioAIOptions opts = new MarioAIOptions(setUpOptions);
-//        int[] intOpts = opts.toIntArray();
-//        this.reset(intOpts);
+public void reset(String args) {
+	MarioAIOptions marioAIOptions = MarioAIOptions.getOptionsByString(args);
+	this.reset(marioAIOptions);
 }
 
 public void reset(MarioAIOptions setUpOptions)
@@ -210,8 +203,9 @@ public void reset(MarioAIOptions setUpOptions)
 public void tick()
 {
 	levelScene.tick();
-	if (GlobalOptions.isVisualization)
+	if (GlobalOptions.isVisualization){
 		marioVisualComponent.tick();
+	}
 }
 
 public float[] getMarioFloatPos(){
@@ -333,8 +327,10 @@ public List<String> getObservationStrings(boolean Enemies, boolean LevelMap,
         ret.add("Physical Mario Position (x,y): (" + df.format(levelScene.mario.x) + "," + df.format(levelScene.mario.y) + ")");
         ret.add("Mario Observation (Receptive Field)   Width: " + receptiveFieldWidth + " Height: " + receptiveFieldHeight);
         ret.add("X Exit Position: " + levelScene.level.xExit);
-        int MarioXInMap = (int) levelScene.mario.x / levelScene.cellSize; //TODO: !!H! doublcheck and replace with levelScene.mario.mapX
-        int MarioYInMap = (int) levelScene.mario.y / levelScene.cellSize;  //TODO: !!H! doublcheck and replace with levelScene.mario.mapY
+        int MarioXInMap = levelScene.mario.mapX;
+        //(int) levelScene.mario.x / levelScene.cellSize; //TODO: !!H! doublcheck and replace with levelScene.mario.mapX
+        int MarioYInMap = levelScene.mario.mapY;
+        //(int) levelScene.mario.y / levelScene.cellSize;  //TODO: !!H! doublcheck and replace with levelScene.mario.mapY
         ret.add("Calibrated Mario Position (x,y): (" + MarioXInMap + "," + MarioYInMap + ")\n");
 
         byte[][] levelScene = getLevelSceneObservationZ(ZLevelScene);

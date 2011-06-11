@@ -55,32 +55,30 @@ import java.util.Map;
  * @since MarioAI0.1
  */
 
-public final class MarioAIOptions extends SimulationOptions
-{
+public final class MarioAIOptions extends SimulationOptions {
 private static final HashMap<String, MarioAIOptions> CmdLineOptionsMapString = new HashMap<String, MarioAIOptions>();
 private String optionsAsString = "";
 
 final private Point marioInitialPos = new Point();
 
-public MarioAIOptions(String[] args)
-{
-    super();
-    this.setArgs(args);
+public MarioAIOptions(String[] args) {
+	super();
+	this.setArgs(args);
 }
 
 //    @Deprecated
-
+/*
 public MarioAIOptions(String args)
 {
     //USE MarioAIOptions.getCmdLineOptionsClassByString(String args) method
     super();
     this.setArgs(args);
 }
+*/
 
-public MarioAIOptions()
-{
-    super();
-    this.setArgs("");
+public MarioAIOptions() {
+	super();
+	this.setArgs("");
 }
 
 public void setArgs(String argString)

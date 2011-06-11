@@ -140,20 +140,18 @@ private int invulnerableTime = 0;
 public Sprite carried = null;
 //    private static Mario instance;
 
-public Mario(LevelScene levelScene)
-{
-    kind = KIND_MARIO;
+public Mario(LevelScene levelScene){
+	kind = KIND_MARIO;
 //        Mario.instance = this;
-    this.levelScene = levelScene;
-    x = levelScene.getMarioInitialPos().x;
-    y = levelScene.getMarioInitialPos().y;
-    mapX = (int) (x / 16);
-    mapY = (int) (y / 16);
+	this.levelScene = levelScene;
+	x = levelScene.getMarioInitialPos().x;
+	y = levelScene.getMarioInitialPos().y;
+	updateMapXY();
 
-    facing = 1;
-    setMode(Mario.large, Mario.fire);
-    yaa = marioGravity * 3;
-    jT = jumpPower / (marioGravity);
+	facing = 1;
+	setMode(Mario.large, Mario.fire);
+	yaa = marioGravity * 3;
+	jT = jumpPower / (marioGravity);
 }
 
 private float jT;
@@ -674,7 +672,7 @@ public void stomp(final Enemy enemy)
 
     float targetY = enemy.y - enemy.height / 2;
     move(0, targetY - y);
-    mapY = (int) y / 16;
+    updateMapXY();
 
     xJumpSpeed = 0;
     yJumpSpeed = -1.9f;
@@ -699,7 +697,7 @@ public void stomp(final Shell shell)
     {
         float targetY = shell.y - shell.height / 2;
         move(0, targetY - y);
-        mapY = (int) y / 16;
+        updateMapXY();
 
         xJumpSpeed = 0;
         yJumpSpeed = -1.9f;

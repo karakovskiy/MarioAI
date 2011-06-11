@@ -120,25 +120,19 @@ public ParameterContainer()
     InitDefaults();
 }
 
-public void setParameterValue(String param, String value)
-{
-    try
-    {
-        if (allowedOptions.contains(param))
-        {
-            optionsHashMap.put(param, value);
-        } else
-        {
-            throw new IllegalArgumentException("Parameter " + param + " is not valid. Typo?");
-        }
-    }
-    catch (IllegalArgumentException e)
-    {
-
-        System.err.println("Error: Undefined parameter '" + param + " " + value + "'");
-        System.err.println(e.getMessage());
-        System.err.println("Some defaults might be used instead");
-    }
+public void setParameterValue(String param, String value) {
+	try{
+		if (allowedOptions.contains(param)){
+			optionsHashMap.put(param, value);
+		} else {
+			throw new IllegalArgumentException("Parameter " + param + " is not valid. Typo?");
+		}
+	}
+	catch (IllegalArgumentException e) {
+		System.err.println("Error: Undefined parameter '" + param + " " + value + "'");
+		System.err.println(e.getMessage());
+		System.err.println("Some defaults might be used instead");
+	}
 }
 
 public String getParameterValue(String param)
@@ -226,10 +220,8 @@ public boolean b(String s)
                 "> whereas expected 'on' or 'off'\n[MarioAI] ~ Execution Terminated");
 }
 
-public static void InitDefaults()
-{
-    if (defaultOptionsHashMap == null)
-    {
+public static void InitDefaults() {
+    if (defaultOptionsHashMap == null) {
         defaultOptionsHashMap = new HashMap<String, String>();
 //            AgentsPool.setCurrentAgent(new HumanKeyboardAgent());
         defaultOptionsHashMap.put("-ag", //"ch.idsia.agents.controllers.ForwardAgent");

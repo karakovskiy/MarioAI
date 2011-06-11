@@ -28,6 +28,7 @@
 package ch.idsia.benchmark.mario.engine.sprites;
 
 import ch.idsia.benchmark.mario.engine.GlobalOptions;
+import ch.idsia.benchmark.mario.engine.LevelScene;
 import ch.idsia.benchmark.mario.engine.MarioVisualComponent;
 import ch.idsia.benchmark.mario.engine.level.SpriteTemplate;
 
@@ -155,10 +156,9 @@ public float windScale(final float wind, int facing)
     return facing == 1 ? wind : -wind;
 }
 
-public void move()
-{
-    x += xa;
-    y += ya;
+public void move() {
+	x += xa;
+	y += ya;
 }
 
 public void render(final Graphics og)
@@ -224,19 +224,24 @@ public void render(final Graphics og)
     }
 }
 
-public final void tick()
-{
-    xOld = x;
-    yOld = y;
-    move();
-    mapY = (int) (y / 16);
-    mapX = (int) (x / 16);
+public final void tick() {
+	updateOldXY();
+	move();
+	updateMapXY();
 }
 
-public final void tickNoMove()
-{
-    xOld = x;
-    yOld = y;
+public final void updateMapXY(){
+	mapY = (int) (y / LevelScene.cellSize);
+	mapX = (int) (x / LevelScene.cellSize);
+}
+
+public final void tickNoMove() {
+	updateOldXY();
+}
+
+public final void updateOldXY(){
+	xOld = x;
+	yOld = y;
 }
 
 //    public float getX(float alpha)

@@ -54,7 +54,7 @@ public MultiDifficultyProgressTask(MarioAIOptions evaluationOptions)
 public int evaluate(final Agent controller)
 {
     int distanceTravelled = 0;
-    float[] fitnesses = new float[difficulties.length + 1];
+//    float[] fitnesses = new float[difficulties.length + 1];
     for (int difficulty : difficulties)
     {
         controller.reset();

@@ -224,8 +224,7 @@ public void bump(int x, int y, boolean canBreakBricks)
     }
 }
 
-public void bumpInto(int x, int y)
-{
+public void bumpInto(int x, int y){
     byte block = level.getBlock(x, y);
     if (((Level.TILE_BEHAVIORS[block & 0xff]) & Level.BIT_PICKUPABLE) > 0)
     {
@@ -249,57 +248,45 @@ public int getKillsByFire()  { return killedCreaturesByFireBall; }
 public int getKillsByStomp() { return killedCreaturesByStomp; }
 public int getKillsByShell() { return killedCreaturesByShell; }
 
-public int[] getMarioState()
-{
-    marioState[0] = this.getMarioStatus();
-    marioState[1] = this.getMarioMode();
-    marioState[2] = this.isMarioOnGround() ? 1 : 0;
-    marioState[3] = this.isMarioAbleToJump() ? 1 : 0;
-    marioState[4] = this.isMarioAbleToShoot() ? 1 : 0;
-    marioState[5] = this.isMarioCarrying() ? 1 : 0;
-    marioState[6] = this.getKillsTotal();
-    marioState[7] = this.getKillsByFire();
-    marioState[8] = this.getKillsByStomp();
-    marioState[9] = this.getKillsByShell();
-    marioState[10] = this.getTimeLeft();
-    return marioState;
+public int[] getMarioState() {
+	marioState[0] = this.getMarioStatus();
+	marioState[1] = this.getMarioMode();
+	marioState[2] = this.isMarioOnGround() ? 1 : 0;
+	marioState[3] = this.isMarioAbleToJump() ? 1 : 0;
+	marioState[4] = this.isMarioAbleToShoot() ? 1 : 0;
+	marioState[5] = this.isMarioCarrying() ? 1 : 0;
+	marioState[6] = this.getKillsTotal();
+	marioState[7] = this.getKillsByFire();
+	marioState[8] = this.getKillsByStomp();
+	marioState[9] = this.getKillsByShell();
+	marioState[10] = this.getTimeLeft();
+	return marioState;
 }
 
-public void performAction(boolean[] action)
-{
+public void performAction(boolean[] action) {
     // might look ugly , but arrayCopy is not necessary here:
     this.mario.keys = action;
 }
 
-public boolean isLevelFinished()
-{
-    return (mario.getStatus() != Mario.STATUS_RUNNING);
+public boolean isLevelFinished() {
+	return (mario.getStatus() != Mario.STATUS_RUNNING);
 }
 
-public boolean isMarioAbleToShoot()
-{
-    return mario.isAbleToShoot();
-}
+public boolean isMarioAbleToShoot() { return mario.isAbleToShoot(); }
 
-public int getMarioStatus()
-{
-    return mario.getStatus();
-}
+public int getMarioStatus() { return mario.getStatus(); }
 
-public boolean isMarioOnGround()
-{ return mario.isOnGround(); }
+public boolean isMarioOnGround() { return mario.isOnGround(); }
 
-public boolean isMarioAbleToJump()
-{ return mario.mayJump(); }
+public boolean isMarioAbleToJump() { return mario.mayJump(); }
 
-public void resetDefault()
-{
+public void resetDefault() {
     // TODO: set values to defaults
     reset(MarioAIOptions.getDefaultOptions());
 }
 
-public void reset(MarioAIOptions marioAIOptions)
-{
+public void reset(MarioAIOptions marioAIOptions){
+/* for debug
 //        System.out.println("\nLevelScene RESET!");
 //        this.gameViewer = setUpOptions[0] == 1;
 //        System.out.println("this.mario.isMarioInvulnerable = " + this.mario.isMarioInvulnerable);
@@ -311,7 +298,7 @@ public void reset(MarioAIOptions marioAIOptions)
 //        System.out.println("levelSeed = " + levelSeed);
 //    this.levelType = marioAIOptions.getLevelType();
 //        System.out.println("levelType = " + levelType);
-
+*/
 
     GlobalOptions.FPS = marioAIOptions.getFPS();
 //        System.out.println("GlobalOptions.FPS = " + GlobalOptions.FPS);
@@ -473,7 +460,6 @@ private void addSpritesToScreen(){
 	for (int x = (int) xCam / cellSize - 1; x <= (int) (xCam + this.width) / cellSize + 1; x++){
 		for (int y = (int) yCam / cellSize - 1; y <= (int) (yCam + this.height) / cellSize + 1; y++){
 			int dir = 0;
-	
 			if (x * cellSize + 8 > mario.x + cellSize) { dir = -1; }
 			if (x * cellSize + 8 < mario.x - cellSize) { dir = 1; }
 			
