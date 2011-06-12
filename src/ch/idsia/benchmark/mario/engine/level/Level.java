@@ -97,14 +97,14 @@ static public class objCounters implements Serializable
 }
 
 public static final String[] BIT_DESCRIPTIONS = {//
-        "BLOCK UPPER", //
-        "BLOCK ALL", //
-        "BLOCK LOWER", //
-        "SPECIAL", //
-        "BUMPABLE", //
-        "BREAKABLE", //
-        "PICKUPABLE", //
-        "ANIMATED",//
+	"BLOCK UPPER", //
+	"BLOCK ALL", //
+	"BLOCK LOWER", //
+	"SPECIAL", //
+	"BUMPABLE", //
+	"BREAKABLE", //
+	"PICKUPABLE", //
+	"ANIMATED",//
 };
 
 public static byte[] TILE_BEHAVIORS = new byte[256];
@@ -137,8 +137,7 @@ public SpriteTemplate[][] spriteTemplates;
 public int xExit;
 public int yExit;
 
-public Level(int length, int height)
-{
+public Level(int length, int height) {
 //        ints = new Vector();
 //        booleans = new Vector();
     this.length = length;
@@ -193,30 +192,29 @@ public static void save(Level lvl, ObjectOutputStream oos) throws IOException
 /**
  * Animates the unbreakable brick when smashed from below by Mario
  */
-public void tick()
-{
-    // TODO:!!H! Optimize this!
-    for (int x = 0; x < length; x++)
-        for (int y = 0; y < height; y++)
-            if (data[x][y] > 0) data[x][y]--;
+public void tick(int xStart, int yStart, int xEnd, int yEnd) {
+	// TODO:!!H! Optimize this! //done
+	for (int x = xStart; x < xEnd; x++){
+		for (int y = yStart; y < yEnd; y++){
+			if (data[x][y] > 0) { data[x][y]--; }
+		}
+	}
 }
 
-public byte getBlockCapped(int x, int y)
-{
-    if (x < 0) x = 0;
-    if (y < 0) y = 0;
-    if (x >= length) x = length - 1;
-    if (y >= height) y = height - 1;
-    return map[x][y];
+public byte getBlockCapped(int x, int y) {
+	if (x < 0) { x = 0; }
+	if (y < 0) { y = 0; }
+	if (x >= length) { x = length - 1; }
+	if (y >= height) { y = height - 1; }
+	return map[x][y];
 }
 
-public byte getBlock(int x, int y)
-{
-    if (x < 0) x = 0;
-    if (y < 0) return 0;
-    if (x >= length) x = length - 1;
-    if (y >= height) y = height - 1;
-    return map[x][y];
+public byte getBlock(int x, int y) {
+	if (x < 0) { x = 0; }
+	if (y < 0) { return 0; }
+	if (x >= length) { x = length - 1; }
+	if (y >= height) { y = height - 1; }
+	return map[x][y];
 }
 
 public void setBlock(int x, int y, byte b)

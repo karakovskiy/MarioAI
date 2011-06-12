@@ -44,8 +44,8 @@ import java.util.Vector;
  * Date: Mar 14, 2010 Time: 4:47:33 PM
  */
 
-public class BasicTask implements Task
-{
+public class BasicTask implements Task {
+	
 protected final static Environment environment = MarioEnvironment.getInstance();
 private Agent agent;
 protected MarioAIOptions options;

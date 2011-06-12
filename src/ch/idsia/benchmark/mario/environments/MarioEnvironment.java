@@ -50,8 +50,8 @@ import java.util.List;
  * Package: ch.idsia.benchmark.mario.environments
  */
 
-public final class MarioEnvironment implements Environment
-{
+public final class MarioEnvironment implements Environment {
+
 private int[] marioEgoPos = new int[2];
 private int receptiveFieldHeight = -1; // to be setup via MarioAIOptions
 private int receptiveFieldWidth = -1; // to be setup via MarioAIOptions
@@ -61,8 +61,6 @@ private int prevRFW = -1;
 private byte[][] levelSceneZ;     // memory is allocated in reset
 private byte[][] enemiesZ;      // memory is allocated in reset
 private byte[][] mergedZZ;      // memory is allocated in reset
-
-//public List<Sprite> sprites;
 
 private int[] serializedLevelScene;   // memory is allocated in reset
 private int[] serializedEnemies;      // memory is allocated in reset
@@ -106,8 +104,7 @@ public void reset(String args) {
 	this.reset(marioAIOptions);
 }
 
-public void reset(MarioAIOptions setUpOptions)
-{
+public void reset(MarioAIOptions setUpOptions) {
     /*System.out.println("\nsetUpOptions = " + setUpOptions);
     for (int i = 0; i < setUpOptions.length; ++i)
     {
@@ -200,8 +197,7 @@ public void reset(MarioAIOptions setUpOptions)
     PunctualJudge.resetCounter();
 }
 
-public void tick()
-{
+public void tick() {
 	levelScene.tick();
 	if (GlobalOptions.isVisualization){
 		marioVisualComponent.tick();

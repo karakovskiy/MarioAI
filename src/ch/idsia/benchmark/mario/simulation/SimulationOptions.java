@@ -128,9 +128,8 @@ public String getAgentFullLoadName()
     return getParameterValue("-ag");
 }
 
-public String getLevelFileName()
-{
-    return getParameterValue("-s");
+public String getLevelFileName() {
+	return getParameterValue("-s");
 }
 
 // Agent

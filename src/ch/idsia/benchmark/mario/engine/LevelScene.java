@@ -62,10 +62,6 @@ public int tickCount;
 
 public int startTime = 0;
 private int timeLeft;
-private int width;
-private int height;
-
-//private static boolean onLadder = false;
 
 private Random randomGen = new Random(0);
 
@@ -103,8 +99,7 @@ private Replayer replayer;
 
 //    private int[] args; //passed to reset method. ATTENTION: not cloned.
 
-public LevelScene()
-{
+public LevelScene() {
     try
     {
 //            System.out.println("Java::LevelScene: loading tiles.dat...");
@@ -151,7 +146,7 @@ public void tick(){
 	countFireballsOnScreen();
 	
 	tickCount++;
-	level.tick();
+	level.tick(getCellXCam(), getCellYCam(), getCellXEndOfCam(), getCellYEndOfCam());
 
 	addSpritesToScreen();
 	for (Sprite sprite : sprites) { sprite.tick(); }
@@ -264,8 +259,8 @@ public int[] getMarioState() {
 }
 
 public void performAction(boolean[] action) {
-    // might look ugly , but arrayCopy is not necessary here:
-    this.mario.keys = action;
+	// might look ugly , but arrayCopy is not necessary here:
+	this.mario.keys = action;
 }
 
 public boolean isLevelFinished() {
@@ -281,8 +276,7 @@ public boolean isMarioOnGround() { return mario.isOnGround(); }
 public boolean isMarioAbleToJump() { return mario.mayJump(); }
 
 public void resetDefault() {
-    // TODO: set values to defaults
-    reset(MarioAIOptions.getDefaultOptions());
+	reset(MarioAIOptions.getDefaultOptions());
 }
 
 public void reset(MarioAIOptions marioAIOptions){
@@ -365,8 +359,8 @@ public void reset(MarioAIOptions marioAIOptions){
 
     Sprite.spriteContext = this;
     sprites.clear();
-    this.width = GlobalOptions.VISUAL_COMPONENT_WIDTH;
-    this.height = GlobalOptions.VISUAL_COMPONENT_HEIGHT;
+//    this.width = GlobalOptions.VISUAL_COMPONENT_WIDTH;
+//    this.height = GlobalOptions.VISUAL_COMPONENT_HEIGHT;
 
     Sprite.setCreaturesGravity(marioAIOptions.getCreaturesGravity());
     Sprite.setCreaturesWind(marioAIOptions.getWind());
@@ -431,8 +425,9 @@ public void appendBonusPoints(final int superPunti){
 
 private void checkCamLimits(){
 	if (xCam < 0) xCam = 0;
-	if (xCam > level.length * cellSize - GlobalOptions.VISUAL_COMPONENT_WIDTH)
+	if (xCam > level.length * cellSize - getCamWidth()){
 			xCam = level.length * cellSize - getCamWidth();
+	}
 }
 
 private boolean outOfScreen(Sprite sprite){
@@ -456,9 +451,14 @@ private void countFireballsOnScreen(){
 	}
 }
 
+private int getCellXCam(){ return (int) xCam / cellSize; }
+private int getCellXEndOfCam(){ return (int) (xCam + getCamWidth()) / cellSize; }
+private int getCellYCam(){ return (int) yCam / cellSize; }
+private int getCellYEndOfCam(){ return (int) (yCam + getCamHeight()) / cellSize; }
+
 private void addSpritesToScreen(){
-	for (int x = (int) xCam / cellSize - 1; x <= (int) (xCam + this.width) / cellSize + 1; x++){
-		for (int y = (int) yCam / cellSize - 1; y <= (int) (yCam + this.height) / cellSize + 1; y++){
+	for (int x = getCellXCam() - 1; x <= getCellXEndOfCam() + 1; x++){
+		for (int y = getCellYCam() - 1; y <= getCellYEndOfCam() + 1; y++){
 			int dir = 0;
 			if (x * cellSize + 8 > mario.x + cellSize) { dir = -1; }
 			if (x * cellSize + 8 < mario.x - cellSize) { dir = 1; }

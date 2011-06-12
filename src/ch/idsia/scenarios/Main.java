@@ -52,7 +52,7 @@ public static void main(String[] args)
 //            {
 //                marioAIOptions.setLevelDifficulty(i);
 //                marioAIOptions.setLevelRandSeed(seed++);
-    basicTask.setOptionsAndReset(marioAIOptions);
+    //basicTask.setOptionsAndReset(marioAIOptions);
 //    basicTask.runSingleEpisode(1);
     basicTask.doEpisodes(1,true,1);
 //    System.out.println(basicTask.getEnvironment().getEvaluationInfoAsString());
