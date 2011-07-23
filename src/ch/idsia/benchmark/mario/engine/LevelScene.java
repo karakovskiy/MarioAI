@@ -173,7 +173,7 @@ public void removeSprite(Sprite sprite){
 public void bump(int x, int y, boolean canBreakBricks)
 {
 	byte block = level.getBlock(x, y);
-	
+
 	if ((Level.TILE_BEHAVIORS[block & 0xff] & Level.BIT_BUMPABLE) > 0){
 		if (block == 1) { Mario.gainHiddenBlock(); }
 		bumpInto(x, y - 1);
