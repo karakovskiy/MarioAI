@@ -129,7 +129,8 @@ public void checkFireballCollide(Fireball fireball)
     fireballsToCheck.add(fireball);
 }
 
-public void tick(){
+public void tick()
+{
 	if (GlobalOptions.isGameplayStopped) { return; }
 	
 	timeLeft--;
